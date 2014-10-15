@@ -19,72 +19,59 @@ from numpy.linalg import norm, solve
 from scipy import linalg as al#algebra lineal
 
 def midpoint (intervalos, funcion):
-    fun = np.vectorize(funcion)
-    x = np.linspace(0, 1, intervalos+1)
     h=(float(1)-float(0))/float(intervalos)
+    valor=0
     suma=0
-    for i in range(intervalos-1):
-        mid=(x[i+1] + x[i])/2
-        valor=fun(mid)
-        suma= suma+valor
-    parte_izquierda=h*suma
-    numero=random.random()
-    dev=derivative(fun,numero,dx=1,n=2)
-    parte_derecha= (((1-0)*h**2)/24)*dev
-    resultado= parte_derecha+parte_izquierda
-    return resultado
+    for i in range(1,intervalos+1):
+        wi=(valor+valor+h)/2
+        suma= suma+funcion(wi)
+        valor=valor+h
+    return suma*h
 
 def trapezoide(intervalos,funcion):
-    fun = np.vectorize(funcion)
-    x = np.linspace(0, 1, intervalos+1)
     h=(float(1)-float(0))/float(intervalos)
-    primer=h/float(2)
-    y0=fun(0)               #buscar bien que son los y0  e  ym
-    ym=fun(intervalos)
+    h2=h/2
+    fa=funcion(0)
+    fb=funcion(1)
+    numero=0
     suma=0
-    for i in range(intervalos-1):
-        valor=fun(i)
-        suma= suma+valor
-    suma_total=suma*2
-    lado_izquierdo=primer*(y0+ym+suma_total)
-    numero=random.random()
-    dev=derivative(fun,numero,dx=1,n=2)
-    lado_derecho= (((1-0)*h**2)/12)*dev
-    total=lado_izquierdo-lado_derecho
-    return total
+    for i in range(1,intervalos):
+        numero=numero+h
+        valor=funcion(numero)
+        suma=suma+valor
+    suma=suma*2
+    final=(fa+fb+suma)*h2
+    return final
 
 def simpson (intervalos,funcion):
-    fun = np.vectorize(funcion)
-    x = np.linspace(0, 1, intervalos+1)
     h=(float(1)-float(0))/float(intervalos)
-    primer = h/3
-    y0=fun(0)
-    y2m=fun(2*intervalos)
+    h3=h/3
+    fa=funcion(0)
+    fb=funcion(1)
+    x=np.linspace(0,1,intervalos+1)
     suma1=0
-    for i in range(intervalos):
-        valor=fun(2*i)
-        suma1= suma1+valor
-    suma_total_primera=suma1*4
+    for i in range(1,intervalos/2):
+        suma1= suma1+funcion(x[2*i])
+    suma1=suma1*2
     suma2=0
-    for i in range(intervalos-1):
-        valor=fun(2*i)
-        suma2= suma2+valor
-    suma_total_segunda=suma2*2
-    lado_izquierdo=primer*(y0+y2m+suma_total_primera+suma_total_segunda)
-    numero=random.random()
-    dev=derivative(fun,numero,dx=1,n=2)#el n tiene que ser 4 pero numpy no me daja D:
-    lado_derecho= (((1-0)*h**4)/180)*dev
-    total =lado_izquierdo-lado_derecho
-    return total
+    for i in range(1,(intervalos/2)+1):
+        suma2=suma2+funcion(x[2*i-1])
+    suma2=suma2*4
+    final=h3*(fa+fb+suma1+suma2)
+    return final
+
+
 
 
 
 if __name__ == '__main__':
-    myfun = lambda x : np.sin(x) #1 # x #np.exp(-x)
-    intervalos=1000
-    #a= midpoint(intervalos,myfun)
-    #a= trapezoide(intervalos,myfun)
-    a= simpson(intervalos,myfun)
-    print(a)
+    myfun = lambda x : x**2 #1 # x #np.exp(-x)
+    intervalos=6
+    a= midpoint(intervalos,myfun)
+    b= trapezoide(intervalos,myfun)
+    c= simpson(intervalos,myfun)
+    print("midpoint es: ",a)
+    print("trapecio es: ",b)
+    print("simpson es: ",c)
 
 
