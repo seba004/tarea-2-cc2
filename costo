@@ -17,6 +17,7 @@ from scipy import *
 #import matplotlib.pyplot as plt
 from numpy.linalg import norm, solve
 from scipy import linalg as al#algebra lineal
+import time
 
 def midpoint (intervalos, funcion,a,b):#(a,b) es de donde a donde va la int
     h=(float(b)-float(a))/float(intervalos)
@@ -76,12 +77,27 @@ def gauss (intervalos,funcion):
 if __name__ == '__main__':
     myfun = lambda x : x**2 #1 # x #np.exp(-x)
     intervalos=10
-    a= midpoint(intervalos,myfun,-1,1)
-    b= trapezoide(intervalos,myfun,-1,1)
-    c= simpson(intervalos,myfun,-1,1)
-    d=gauss(intervalos,myfun)
-    print("midpoint es: ",a)
-    print("trapecio es: ",b)
-    print("simpson es: ",c)
-    print("gauss es: ",d)
+    t1 = time.clock()
+    for i in range(0,1000):
+        a= midpoint(intervalos,myfun,-1,1)
+    t2 = time.clock()
 
+    t3 = time.clock()
+    for i in range(0,1000):
+        b= trapezoide(intervalos,myfun,-1,1)
+    t4 = time.clock()
+
+    t5 = time.clock()
+    for i in range(0,1000):
+        c= simpson(intervalos,myfun,-1,1)
+    t6 = time.clock()
+    
+    t7 = time.clock()
+    for i in range(0,1000):
+         d=gauss(intervalos,myfun)
+    t8 = time.clock()
+    print("El tiempo de punto medio es: ", t2-t1)
+    print("El tiempo de trapecio es: ", t4-t3)
+    print("El tiempo de simpson es: ", t6-t5)
+    print("El tiempo de gauss es: ", t8-t7)
+   
