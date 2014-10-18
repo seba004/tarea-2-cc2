@@ -63,16 +63,28 @@ def simpson (intervalos,funcion,a,b):#(a,b) es de donde a donde va la int
 
 
 def gauss (intervalos,funcion):
-    
+
     xi,wi=np.polynomial.legendre.leggauss(intervalos)
     suma=0
-    
+
     for i in range (1,intervalos):
         suma=suma+(wi[i]*funcion(xi[i]))
     suma=suma+wi[0]*funcion(xi[0])
     return suma
-    
 
+
+def legen (intervalos):
+    xi,wi=np.polynomial.legendre.leggauss(intervalos)
+    return xi,wi
+
+def new_gauss(intervalos,funcion,xi,wi):
+
+    suma=0
+
+    for i in range (1,intervalos):
+        suma=suma+(wi[i]*funcion(xi[i]))
+    suma=suma+wi[0]*funcion(xi[0])
+    return suma
 
 if __name__ == '__main__':
     myfun = lambda x : x**2 #1 # x #np.exp(-x)
@@ -91,13 +103,20 @@ if __name__ == '__main__':
     for i in range(0,1000):
         c= simpson(intervalos,myfun,-1,1)
     t6 = time.clock()
-    
+
     t7 = time.clock()
     for i in range(0,1000):
          d=gauss(intervalos,myfun)
     t8 = time.clock()
+
+    t9=time.clock()
+    xi,wi= legen(intervalos)
+    for i in range(0,1000):
+         d=new_gauss(intervalos,myfun,xi,wi)
+    t10 = time.clock()
+
     print("El tiempo de punto medio es: ", t2-t1)
     print("El tiempo de trapecio es: ", t4-t3)
     print("El tiempo de simpson es: ", t6-t5)
     print("El tiempo de gauss es: ", t8-t7)
-   
+    print("El tiempo de gauss modificado es: ", t10-t9)
