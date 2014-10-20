@@ -4,7 +4,7 @@ from scipy.misc import derivative
 import numpy as np
 from scipy import *
 #from matplotlib import *
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from numpy.linalg import norm, solve
 from scipy import linalg as al#algebra lineal
 import time
@@ -79,14 +79,32 @@ def ingreso_datos():
     pi= 2 # peso de agentes
     lista_agentes=[]
     tiempo= 45 #tiempo de simulacion
-    lista_agentes.append(agente(0,0,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
-    lista_agentes.append(agente(2,2,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
-    lista_agentes.append(agente(5,5,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
+    lista_agentes.append(agente(2,1,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
+    lista_agentes.append(agente(1,5,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
+    lista_agentes.append(agente(4,8,pi,5,5,0,0))# xi,yi,pi,vx,vy,influenciax,influencia y donde x e y son pos y vx y vy son vel
     lista_agentes=sum_influencias(lista_agentes,ri)
 
     return lista_agentes
 
 
+def edo_euler(funcion, v_inicial, n):
+    h = 1 / float(n)
+    y = v_inicial
+    for i in range(n):
+        y = y + h * funcion
+        #print y
+    return y
+
+def aplicacion_euler(lista_agentes):
+    cantidad=len(lista_agentes)
+    for i in range (cantidad):
+        valor_x=round(edo_euler(lista_agentes[i].influencia_x,lista_agentes[i].vx,100))
+        valor_y=round(edo_euler(lista_agentes[i].influencia_y,lista_agentes[i].vy,100))
+        base_x=lista_agentes[i].x
+        base_y=lista_agentes[i].y
+        lista_agentes[i].move_x(base_x+valor_x)
+        lista_agentes[i].move_y(base_y+valor_y)
+    return lista_agentes
 
 
 #funciones dibujooooo
@@ -121,12 +139,37 @@ def incorporacion_agentes(agentes,matriz):
         matriz[i.x,i.y]=1
     return matriz
 
+def listas (lista_agentes):
+    cantidad=len(lista_agentes)
+    x=[]
+    y=[]
+    for i in range (cantidad):
+            x.append(lista_agentes[i].x)
+            y.append(lista_agentes[i].y)
+    return x,y
+
+def simulacion ():
+    x=[]
+    y=[]
+    fig, ax = plt.subplots()
+    agentes=ingreso_datos()
+    x,y=listas(agentes)
+    points, = ax.plot(x, y, marker='o', linestyle='None')
+    ax.set_xlim(0, 50)
+    ax.set_ylim(0, 50)
+    tim=4
+    t1= time.clock()
+    while True:
+        agentes=aplicacion_euler(agentes)
+        x,y=listas(agentes)
+        points.set_data(x, y)
+        plt.pause(0.25)
+        t2= time.clock()
+        if (t2-t1 >= tim):
+            break
+    return
+
 
 if __name__ == '__main__':
-    #a=crear_matriz(15,15)
-    #imprimir_matriz(a)
-    #b=cantidad_agentes()
-    #t=creacion_agentes(b)
-    #ma=incorporacion_agentes(t,a)
-    #imprimir_matriz(ma)
-    t=ingreso_datos()
+
+    simulacion()
